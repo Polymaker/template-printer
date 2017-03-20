@@ -34,19 +34,23 @@
             this.btnOpenImg = new System.Windows.Forms.Button();
             this.txtSourceImgPath = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.chkLandscape = new System.Windows.Forms.RadioButton();
+            this.label2 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.lblPageSize = new System.Windows.Forms.Label();
             this.cboPageSizes = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cboPrinters = new System.Windows.Forms.ComboBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.chkLandscape = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.printPreviewControl1 = new TemplatePrinter.PrintPreviewControl();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbxSourceImage)).BeginInit();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -55,9 +59,10 @@
             this.groupBox1.Controls.Add(this.pbxSourceImage);
             this.groupBox1.Controls.Add(this.btnOpenImg);
             this.groupBox1.Controls.Add(this.txtSourceImgPath);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(270, 288);
+            this.groupBox1.Size = new System.Drawing.Size(322, 288);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Template Image";
@@ -109,12 +114,55 @@
             this.groupBox2.Controls.Add(this.cboPageSizes);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.cboPrinters);
-            this.groupBox2.Location = new System.Drawing.Point(288, 12);
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox2.Location = new System.Drawing.Point(0, 288);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(307, 126);
+            this.groupBox2.Size = new System.Drawing.Size(322, 126);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Printer Config";
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Checked = true;
+            this.radioButton2.Location = new System.Drawing.Point(151, 82);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(58, 17);
+            this.radioButton2.TabIndex = 7;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Portrait";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // chkLandscape
+            // 
+            this.chkLandscape.AutoSize = true;
+            this.chkLandscape.Location = new System.Drawing.Point(67, 82);
+            this.chkLandscape.Name = "chkLandscape";
+            this.chkLandscape.Size = new System.Drawing.Size(78, 17);
+            this.chkLandscape.TabIndex = 6;
+            this.chkLandscape.Text = "Landscape";
+            this.chkLandscape.UseVisualStyleBackColor = true;
+            this.chkLandscape.CheckedChanged += new System.EventHandler(this.chkLandscape_CheckedChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 84);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(58, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Orientation";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(226, 97);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Preview";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // lblPageSize
             // 
@@ -155,75 +203,54 @@
             this.cboPrinters.TabIndex = 0;
             this.cboPrinters.SelectedIndexChanged += new System.EventHandler(this.cboPrinters_SelectedIndexChanged);
             // 
-            // button1
+            // splitContainer1
             // 
-            this.button1.Location = new System.Drawing.Point(226, 97);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 4;
-            this.button1.Text = "Preview";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 3);
+            this.splitContainer1.Name = "splitContainer1";
             // 
-            // pictureBox1
+            // splitContainer1.Panel1
             // 
-            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox1.Location = new System.Drawing.Point(288, 144);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(331, 276);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.splitContainer1.Panel1.Controls.Add(this.groupBox2);
+            this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
             // 
-            // label2
+            // splitContainer1.Panel2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 84);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(58, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Orientation";
+            this.splitContainer1.Panel2.Controls.Add(this.printPreviewControl1);
+            this.splitContainer1.Size = new System.Drawing.Size(721, 443);
+            this.splitContainer1.SplitterDistance = 324;
+            this.splitContainer1.TabIndex = 3;
             // 
-            // chkLandscape
+            // printPreviewControl1
             // 
-            this.chkLandscape.AutoSize = true;
-            this.chkLandscape.Location = new System.Drawing.Point(67, 82);
-            this.chkLandscape.Name = "chkLandscape";
-            this.chkLandscape.Size = new System.Drawing.Size(78, 17);
-            this.chkLandscape.TabIndex = 6;
-            this.chkLandscape.Text = "Landscape";
-            this.chkLandscape.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Checked = true;
-            this.radioButton2.Location = new System.Drawing.Point(151, 82);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(58, 17);
-            this.radioButton2.TabIndex = 7;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Portrait";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.printPreviewControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.printPreviewControl1.LayoutMode = false;
+            this.printPreviewControl1.Location = new System.Drawing.Point(0, 0);
+            this.printPreviewControl1.Name = "printPreviewControl1";
+            this.printPreviewControl1.Size = new System.Drawing.Size(391, 441);
+            this.printPreviewControl1.TabIndex = 0;
+            this.printPreviewControl1.Text = "printPreviewControl1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(631, 432);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.ClientSize = new System.Drawing.Size(727, 449);
+            this.Controls.Add(this.splitContainer1);
             this.Name = "Form1";
+            this.Padding = new System.Windows.Forms.Padding(3);
             this.Text = "Form1";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbxSourceImage)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -241,10 +268,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblPageSize;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton chkLandscape;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private PrintPreviewControl printPreviewControl1;
     }
 }
 
