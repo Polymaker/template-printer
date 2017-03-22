@@ -44,6 +44,7 @@
             this.cboPrinters = new System.Windows.Forms.ComboBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.printPreviewControl1 = new TemplatePrinter.PrintPreviewControl();
+            this.button2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbxSourceImage)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -213,6 +214,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.button2);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox2);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
             // 
@@ -232,6 +234,16 @@
             this.printPreviewControl1.Size = new System.Drawing.Size(391, 441);
             this.printPreviewControl1.TabIndex = 0;
             this.printPreviewControl1.Text = "printPreviewControl1";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(188, 414);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 8;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // Form1
             // 
@@ -273,6 +285,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private PrintPreviewControl printPreviewControl1;
+        private System.Windows.Forms.Button button2;
     }
 }
 

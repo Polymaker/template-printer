@@ -45,7 +45,6 @@ namespace TemplatePrinter
         {
             base.OnLoad(e);
             LoadPrinters();
-            
         }
 
         private void btnOpenImg_Click(object sender, EventArgs e)
@@ -224,6 +223,11 @@ namespace TemplatePrinter
         private void chkLandscape_CheckedChanged(object sender, EventArgs e)
         {
             SetPrintSettings();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            printPreviewControl1.LayoutMode = !printPreviewControl1.LayoutMode;
         }
     }
 }

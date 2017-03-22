@@ -30,8 +30,13 @@ namespace TemplatePrinter
             printJob.Printer = PrinterSettings;
             printJob.PaperSize = DefaultPageSettings.PaperSize;
             printJob.Landscape = DefaultPageSettings.Landscape;
-            printLayout = PrintLayout.CalculateLayout(printJob);
+            CalculateLayout();
             currentPageX = currentPageY = 0;
+        }
+
+        public void CalculateLayout()
+        {
+            printLayout = PrintLayout.CalculateLayout(printJob);
         }
 
         protected override void OnEndPrint(PrintEventArgs e)
@@ -44,14 +49,17 @@ namespace TemplatePrinter
 
             base.OnPrintPage(e);
             var g = e.Graphics;
-
-            var printArea = printLayout.PrintableArea.ToDisplay(100);
-            var imageBounds = new RectangleM(printLayout.AlignmentOffset, printJob.TargetSize).ToDisplay(100);
-            var renderOverlap = (float)printJob.OverlapAmount.Pixels(100);
+            
+            var targetDPI = g.PageUnit == GraphicsUnit.Display ? 100 : g.DpiX;
+            //e.Graphics.p
+            var testDPI = printLayout.PaperSize.Width[UnitOfMeasure.HundredInch] / (double)e.PageBounds.Width;
+            var printArea = printLayout.PrintableArea.ToDisplay(targetDPI);
+            var imageBounds = new RectangleM(printLayout.AlignmentOffset, printJob.TargetSize).ToDisplay(targetDPI);
+            var renderOverlap = (float)printJob.OverlapAmount.Pixels(targetDPI);
 
             //g.DrawRectangle(Pens.Red, printArea.X, printArea.Y, printArea.Width, printArea.Height);
             g.SetClip(printArea);
-
+            var currentTransform = g.Transform;
             g.TranslateTransform(printArea.X, printArea.Y);
             g.TranslateTransform(
                 -((printArea.Width * currentPageX) - (currentPageX * renderOverlap)),
@@ -64,13 +72,13 @@ namespace TemplatePrinter
                     marker.Position.Y - marker.Size / 2, 
                     marker.Size, marker.Size
                     );
-                g.DrawEllipse(Pens.Black, markerBounds.ToDisplay(100));
+                g.DrawEllipse(Pens.Black, markerBounds.ToDisplay(targetDPI));
             }
             //g.DrawRectangle(Pens.Red, imageBounds.X, imageBounds.Y, imageBounds.Width, imageBounds.Height);
 
             g.DrawImage(printJob.Image, imageBounds);
-
-            g.ResetTransform();
+            g.Transform = currentTransform;
+            //g.ResetTransform();
             g.ResetClip();
 
             currentPageX++;
@@ -81,6 +89,20 @@ namespace TemplatePrinter
             }
 
             e.HasMorePages = currentPageY < printLayout.TotalPageY;
+        }
+
+        //public void DrawPage(Graphics g, int pageNb)
+        //{
+
+        //}
+
+        public void DrawPage(Graphics g, int pageX, int pageY)
+        {
+            currentPageX = pageX;
+            currentPageY = pageY;
+            var pageSize = printLayout.PaperSize.ToDisplay(g.PageUnit == GraphicsUnit.Display ? 100 : g.DpiX);
+            var pageBounds = new Rectangle(0, 0, (int)pageSize.Width, (int)pageSize.Height);
+            OnPrintPage(new PrintPageEventArgs(g, Rectangle.Empty, pageBounds, DefaultPageSettings));
         }
     }
 }
