@@ -66,7 +66,13 @@ namespace TemplatePrinter
             _Width = width;
             _Height = height;
         }
-
+        public RectangleM(PointM pos, SizeM size)
+        {
+            _X = pos.X;
+            _Y = pos.Y;
+            _Width = size.Width;
+            _Height = size.Height;
+        }
         public RectangleF ToDisplay(double dpi)
         {
             return new RectangleF((float)X.Pixels(dpi), (float)Y.Pixels(dpi), (float)Width.Pixels(dpi), (float)Height.Pixels(dpi));
