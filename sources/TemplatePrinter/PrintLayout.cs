@@ -17,6 +17,7 @@ namespace TemplatePrinter
         private SizeM _TotalPrintableSize;
         private SizeM _TotalPaperSize;
         private PointM _AlignmentOffset;
+        private SizeM _TotalCoveredSize;
         private bool _IsLandscape;
 
         public int TotalPageX { get { return _TotalPageX; } }
@@ -25,6 +26,7 @@ namespace TemplatePrinter
         public SizeM PaperSize { get { return _PaperSize; } }
         public SizeM TotalImageSize { get { return _TotalImageSize; } }
         public SizeM TotalPrintableSize { get { return _TotalPrintableSize; } }
+        public SizeM TotalCoveredSize { get { return _TotalCoveredSize; } }
         public SizeM TotalPaperSize { get { return _TotalPaperSize; } }
         public PointM AlignmentOffset { get { return _AlignmentOffset; } }
         public bool IsLandscape { get { return _IsLandscape; } }
@@ -71,7 +73,9 @@ namespace TemplatePrinter
             printLayout._TotalImageSize = new SizeM(
                 config.TargetSize.Width + (config.OverlapAmount * (printLayout.TotalPageX - 1)),
                 config.TargetSize.Height + (config.OverlapAmount * (printLayout.TotalPageY - 1)));
-
+            printLayout._TotalCoveredSize = new SizeM(
+                printLayout._PrintableArea.Width * printLayout.TotalPageX - (config.OverlapAmount * (printLayout.TotalPageX - 1)),
+                printLayout._PrintableArea.Height * printLayout.TotalPageY - (config.OverlapAmount * (printLayout.TotalPageY - 1)));
             printLayout._TotalPrintableSize = new SizeM(
                 printLayout._PrintableArea.Width * printLayout.TotalPageX,
                 printLayout._PrintableArea.Height * printLayout.TotalPageY);

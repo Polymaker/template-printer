@@ -37,6 +37,7 @@ namespace TemplatePrinter
         public void CalculateLayout()
         {
             printLayout = PrintLayout.CalculateLayout(printJob);
+            printJob.SetDefaultMarkers(printLayout);
         }
 
         protected override void OnEndPrint(PrintEventArgs e)
@@ -56,7 +57,7 @@ namespace TemplatePrinter
             var printArea = printLayout.PrintableArea.ToDisplay(targetDPI);
             var imageBounds = new RectangleM(printLayout.AlignmentOffset, printJob.TargetSize).ToDisplay(targetDPI);
             var renderOverlap = (float)printJob.OverlapAmount.Pixels(targetDPI);
-
+            var markerPen = new Pen(Color.Black, (float)Measure.FromMm(0.4).Pixels(targetDPI));
             //g.DrawRectangle(Pens.Red, printArea.X, printArea.Y, printArea.Width, printArea.Height);
             g.SetClip(printArea);
             var currentTransform = g.Transform;
@@ -65,15 +66,19 @@ namespace TemplatePrinter
                 -((printArea.Width * currentPageX) - (currentPageX * renderOverlap)),
                 -((printArea.Height * currentPageY) - (currentPageY * renderOverlap))
                 );
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             foreach (var marker in printJob.Markers)
             {
                 var markerBounds = new RectangleM(
                     marker.Position.X - marker.Size / 2, 
                     marker.Position.Y - marker.Size / 2, 
                     marker.Size, marker.Size
-                    );
-                g.DrawEllipse(Pens.Black, markerBounds.ToDisplay(targetDPI));
+                    ).ToDisplay(targetDPI);
+                g.DrawEllipse(markerPen, markerBounds);
+                g.DrawLine(markerPen, markerBounds.Left, markerBounds.Top, markerBounds.Right, markerBounds.Bottom);
+                g.DrawLine(markerPen, markerBounds.Right, markerBounds.Top, markerBounds.Left, markerBounds.Bottom);
             }
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
             //g.DrawRectangle(Pens.Red, imageBounds.X, imageBounds.Y, imageBounds.Width, imageBounds.Height);
 
             g.DrawImage(printJob.Image, imageBounds);
@@ -87,7 +92,7 @@ namespace TemplatePrinter
                 currentPageX = 0;
                 currentPageY++;
             }
-
+            markerPen.Dispose();
             e.HasMorePages = currentPageY < printLayout.TotalPageY;
         }
 

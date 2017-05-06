@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -58,39 +59,54 @@ namespace TemplatePrinter
             }
             ZoomToFit();
             var g = pe.Graphics;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             double renderDPI = 100 * zoomAmount;
             var imageBounds = new RectangleM(_PrintLayout.AlignmentOffset, PrintParameters.TargetSize).ToDisplay(renderDPI);
             var renderOverlap = (float)PrintParameters.OverlapAmount.Pixels(renderDPI);
             var imgSize = PrintParameters.TargetSize.ToDisplay(renderDPI);
             var pageSize = _PrintLayout.PaperSize.ToDisplay(renderDPI);
             var printArea = _PrintLayout.PrintableArea.ToDisplay(renderDPI);
-            var totalPaper = _PrintLayout.TotalPaperSize.ToDisplay(renderDPI);
 
             if (LayoutMode)
             {
-                var marginX = (int)(_PrintLayout.TotalPaperSize.Width - _PrintLayout.TotalImageSize.Width).Pixels(renderDPI);
-                var marginY = (int)(_PrintLayout.TotalPaperSize.Height - _PrintLayout.TotalImageSize.Height).Pixels(renderDPI);
+                var pageMarginX = (float)(_PrintLayout.PaperSize.Width - _PrintLayout.PrintableArea.Width).Pixels(renderDPI);
+                var pageMarginY = (float)(_PrintLayout.PaperSize.Height - _PrintLayout.PrintableArea.Height).Pixels(renderDPI);
+                var printedBounds = _PrintLayout.TotalCoveredSize.ToDisplay(renderDPI);
+                g.FillRectangle(Brushes.White, 0, 0, printedBounds.Width + pageMarginX, printedBounds.Height + pageMarginY);
+                g.DrawRectangle(Pens.Black, 0, 0, printedBounds.Width + pageMarginX - 1, printedBounds.Height + pageMarginY - 1);
+                g.DrawImage(PrintParameters.Image, 
+                    (printedBounds.Width - imgSize.Width + pageMarginX) /2,
+                    (printedBounds.Height - imgSize.Height + pageMarginY) / 2, 
+                    imgSize.Width, imgSize.Height);
 
-                g.FillRectangle(Brushes.White, 0, 0, imgSize.Width + marginX, imgSize.Height + marginY);
-                g.DrawRectangle(Pens.Black, 0, 0, imgSize.Width + marginX - 1, imgSize.Height + marginY - 1);
-                g.DrawImage(PrintParameters.Image, marginX / 2, marginY / 2, imgSize.Width, imgSize.Height);
-                g.DrawRectangle(Pens.Blue, marginX / 2, marginY / 2, imgSize.Width - 1, imgSize.Height - 1);
                 using (var overlapBrush = new SolidBrush(Color.FromArgb(50, 90, 200, 90)))
                 {
                     for (int x = 1; x < _PrintLayout.TotalPageX; x++)
                     {
-                        var posX = printArea.Left + (printArea.Width * x) - (renderOverlap * (x - 1));
-                        g.FillRectangle(overlapBrush, posX - renderOverlap / 2f, 0, renderOverlap, imgSize.Height + marginY);
+                        var posX = printArea.Left + (printedBounds.Width / _PrintLayout.TotalPageX) * x;
+                        g.FillRectangle(overlapBrush, posX - renderOverlap / 2f, 0, renderOverlap, printedBounds.Height + pageMarginY);
                     }
                     for (int y = 1; y < _PrintLayout.TotalPageY; y++)
                     {
-                        var posY = printArea.Top + (printArea.Height * y) - (renderOverlap * (y - 1));
-                        g.FillRectangle(overlapBrush, 0, posY - renderOverlap / 2f, imgSize.Width + marginX, renderOverlap);
+                        var posY = printArea.Top + (printedBounds.Height / _PrintLayout.TotalPageY) * y;
+                        g.FillRectangle(overlapBrush, 0, posY - renderOverlap / 2f, printedBounds.Width + pageMarginX, renderOverlap);
                     }
                 }
 
+                g.TranslateTransform(pageMarginX / 2, pageMarginY / 2);
+                foreach (var marker in PrintParameters.Markers)
+                {
+                    var markerBounds = new RectangleM(
+                        marker.Position.X - marker.Size / 2,
+                        marker.Position.Y - marker.Size / 2,
+                        marker.Size, marker.Size
+                        ).ToDisplay(renderDPI);
+                    g.DrawEllipse(Pens.Black, markerBounds);
+                    g.DrawLine(Pens.Black, markerBounds.Left, markerBounds.Top, markerBounds.Right, markerBounds.Bottom);
+                    g.DrawLine(Pens.Black, markerBounds.Right, markerBounds.Top, markerBounds.Left, markerBounds.Bottom);
+                }
+                g.ResetTransform();
             }
             else
             {
@@ -114,6 +130,19 @@ namespace TemplatePrinter
                         );
 
                         g.DrawImage(PrintParameters.Image, imageBounds);
+
+                        foreach (var marker in PrintParameters.Markers)
+                        {
+                            var markerBounds = new RectangleM(
+                                marker.Position.X - marker.Size / 2,
+                                marker.Position.Y - marker.Size / 2,
+                                marker.Size, marker.Size
+                                ).ToDisplay(renderDPI);
+                            g.DrawEllipse(Pens.Black, markerBounds);
+                            g.DrawLine(Pens.Black, markerBounds.Left, markerBounds.Top, markerBounds.Right, markerBounds.Bottom);
+                            g.DrawLine(Pens.Black, markerBounds.Right, markerBounds.Top, markerBounds.Left, markerBounds.Bottom);
+                        }
+
                         g.DrawRectangle(Pens.Blue, imageBounds.X, imageBounds.Y, imageBounds.Width, imageBounds.Height);
                         g.ResetClip();
                         g.ResetTransform();
@@ -128,6 +157,7 @@ namespace TemplatePrinter
             if (PrintParameters != null)
             {
                 _PrintLayout = PrintLayout.CalculateLayout(PrintParameters);
+                PrintParameters.SetDefaultMarkers(_PrintLayout);
                 //ZoomToFit();
                 if (IsHandleCreated)
                     Invalidate();

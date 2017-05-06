@@ -37,7 +37,7 @@ namespace TemplatePrinter
             PrintConfig = new PrintParameters()
             {
                 Alignment = ContentAlignment.MiddleCenter,
-                OverlapAmount = Measure.FromCm(1)
+                OverlapAmount = Measure.FromCm(1.5)
             };
         }
 

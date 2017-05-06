@@ -49,6 +49,30 @@ namespace TemplatePrinter
             }
         }
 
+        public Measure Left
+        {
+            get { return X; }
+            set { X = value; }
+        }
+
+        public Measure Right
+        {
+            get { return X + Width; }
+            set { Width = value - X; }
+        }
+
+        public Measure Top
+        {
+            get { return Y; }
+            set { Y = value; }
+        }
+
+        public Measure Bottom
+        {
+            get { return Y + Height ; }
+            set { Height = value - Y; }
+        }
+
         public SizeM Size
         {
             get { return new SizeM(Width, Height); }
